@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getDashboardStatsApi, listCandidatesApi } from "@/http/apiCalls";
+import JobDescriptionSort from "@/components/dashboard/JobDescriptionSort";
  
 interface DashboardStats {
   totalCandidates: {
@@ -118,8 +119,15 @@ export default function Dashboard() {
           )}
         </div>
         
-        {/* File Upload Area */}
-        <FileUploadArea />
+        {/* File Upload Area & Job Description Sort side by side */}
+        <div className="flex flex-col md:flex-row gap-6 w-full">
+          <div className="flex-1">
+            <FileUploadArea />
+          </div>
+          <div className="flex-1">
+            <JobDescriptionSort />
+          </div>
+        </div>
         
         {/* Recently Processed Candidates */}
         <div>

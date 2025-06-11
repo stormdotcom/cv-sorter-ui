@@ -13,6 +13,7 @@ export const registerApi = (data: any) => makeApiCall(API_URLS.auth.register, da
 
 export const fileUpload =  (formData: any) => makeFileUploadCall(API_URLS.file.upload, formData)
 export const listResumes =  (data: any) => makeApiCall(API_URLS.file.resumes, data)
+export const searchResumes =  (data: any) => makeApiCall(API_URLS.file.search, data)
 export const sortFiles =  (data: any) => makeApiCall(API_URLS.file.search, data)
 export const getFileApi = (id: string) => makeApiCall(API_URLS.file.get(id));
 export const deleteFileApi = (id: string) => makeApiCall(API_URLS.file.delete(id));

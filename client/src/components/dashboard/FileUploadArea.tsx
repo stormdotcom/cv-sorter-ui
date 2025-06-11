@@ -1,12 +1,19 @@
 import { useState, useRef } from "react";
 import { FileUploadResponse } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, FileText } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { fileUpload } from "@/http/apiCalls";
+import { fileUpload, searchResumes } from "@/http/apiCalls";
+import { Input } from "@headlessui/react";
 
 type UploadStatus = "idle" | "uploading" | "success" | "error";
 type FileStatus = "pending" | "processing" | "complete" | "error";
@@ -18,7 +25,7 @@ interface FileInfo {
   error?: string;
 }
 
-const ALLOWED_FILE_TYPES = ['.pdf', '.txt'];
+const ALLOWED_FILE_TYPES = [".pdf", ".txt"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 
 export default function FileUploadArea() {
@@ -28,14 +35,16 @@ export default function FileUploadArea() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
-
+  const [loading, setLoading] = useState(false);
+  const [jobDescription, setJobDescription] = useState("");
+  const [jdLoading, setJdLoading] = useState(false);
   const simulateFileUpload = async (selectedFiles: File[]) => {
     setUploadStatus("uploading");
     setProgress(0);
-    
+
     // Simulate progress
     const interval = setInterval(() => {
-      setProgress(prev => {
+      setProgress((prev) => {
         if (prev >= 90) {
           clearInterval(interval);
           return 90;
@@ -45,14 +54,13 @@ export default function FileUploadArea() {
     }, 500);
 
     // Simulate server processing time
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     clearInterval(interval);
     setProgress(100);
-    
- 
+
     setUploadStatus("success");
-    
+
     toast({
       title: "Upload Successful",
       description: "Your resume has been uploaded successfully.",
@@ -61,7 +69,7 @@ export default function FileUploadArea() {
 
   const validateFile = (file: File): string | null => {
     // Check file type
-    const fileExtension = `.${file.name.split('.').pop()?.toLowerCase()}`;
+    const fileExtension = `.${file.name.split(".").pop()?.toLowerCase()}`;
     if (!ALLOWED_FILE_TYPES.includes(fileExtension)) {
       return `File type not supported. Please upload only PDF or TXT files.`;
     }
@@ -118,7 +126,8 @@ export default function FileUploadArea() {
       setUploadStatus("error");
       toast({
         title: "Upload Failed",
-        description: "There was an error uploading your resume. Please try again.",
+        description:
+          "There was an error uploading your resume. Please try again.",
         variant: "destructive",
       });
     }
@@ -159,10 +168,30 @@ export default function FileUploadArea() {
     }
   };
 
+  const handleSubmitJobDescription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Job description submitted");
+    try {
+      setJdLoading(true);
+      await searchResumes({
+        jobDescription: (e.target as HTMLTextAreaElement).value,
+      });
+      setJdLoading(false);
+    } catch (error) {
+      setJdLoading(false);
+      toast({
+        title: "Error",
+        description:
+          "There was an error searching for resumes. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Upload Resume</CardTitle>
+        <CardTitle className="text-lg font-semibold">Upload Resume</CardTitle>
         <CardDescription>
           Upload a resume in PDF or TXT format. Maximum file size is 5MB.
         </CardDescription>
@@ -170,7 +199,8 @@ export default function FileUploadArea() {
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div
-            className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+            className="border-2 border-dashed rounded-lg p-4 w-full text-center cursor-pointer hover:border-primary transition-colors"
+            style={{ minHeight: 120 }}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             onClick={handleUploadClick}
@@ -182,7 +212,7 @@ export default function FileUploadArea() {
               accept=".pdf,.txt"
               className="hidden"
             />
-            <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
+            <FileText className="mx-auto h-10 w-10 text-muted-foreground" />
             <p className="mt-2 text-sm text-muted-foreground">
               Drag and drop a PDF or TXT resume here, or click to select a file
             </p>
@@ -193,7 +223,7 @@ export default function FileUploadArea() {
 
           {files.length > 0 && (
             <div className="mt-4 space-y-4">
-              {files.map((file : any, index : number) => (
+              {files.map((file: any, index: number) => (
                 <div key={index} className="flex items-center justify-between">
                   <span className="text-sm truncate">{file.name}</span>
                   <span className="text-sm text-muted-foreground">
@@ -201,7 +231,7 @@ export default function FileUploadArea() {
                   </span>
                 </div>
               ))}
-              
+
               {uploadStatus === "uploading" && (
                 <Progress value={progress} className="mt-2" />
               )}
@@ -211,7 +241,9 @@ export default function FileUploadArea() {
                 disabled={uploadStatus === "uploading"}
                 className="w-full mt-4"
               >
-                {uploadStatus === "uploading" ? "Uploading..." : "Upload Resume"}
+                {uploadStatus === "uploading"
+                  ? "Uploading..."
+                  : "Upload Resume"}
               </Button>
             </div>
           )}
@@ -226,6 +258,8 @@ export default function FileUploadArea() {
             </Alert>
           )}
         </form>
+
+      
       </CardContent>
     </Card>
   );
