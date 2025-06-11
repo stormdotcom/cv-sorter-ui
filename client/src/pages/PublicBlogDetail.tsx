@@ -24,7 +24,8 @@ As we move forward, we can expect to see even more sophisticated AI applications
 };
 
 export default function PublicBlogDetail() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id;
   const [, setLocation] = useLocation();
   const [post, setPost] = useState(dummyPost);
   const [isLoading, setIsLoading] = useState(true);

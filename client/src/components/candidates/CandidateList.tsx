@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, FileText, Briefcase, Award, AlertTriangle } from "lucide-react";
+import { Search, FileText, Briefcase, Award, AlertTriangle, Clock } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLocation } from "wouter";
+import { formatDistanceToNow } from 'date-fns';
 
 interface Candidate {
   _id: string;
@@ -109,11 +110,22 @@ export function CandidateList({ candidates = [], isLoading = false }: CandidateL
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCandidates.map((candidate) => (
-            <Card key={candidate._id} className="h-full hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">{candidate.name}</CardTitle>
-                <p className="text-sm text-muted-foreground">{candidate.email}</p>
+            <Card key={candidate._id} className="h-full hover:shadow-md transition-shadow relative">
+              <CardHeader className="pb-2">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="text-lg font-semibold mb-0.5">{candidate.name}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{candidate.email}</p>
+                  </div>
+                  {candidate.created_at && (
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground italic mt-0.5">
+                      <Clock className="h-3 w-3 text-muted-foreground" />
+                      <span>{formatDistanceToNow(new Date(candidate.created_at), { addSuffix: true })}</span>
+                    </div>
+                  )}
+                </div>
               </CardHeader>
+              <div className="border-b border-gray-200 mb-2" />
               <CardContent className="space-y-4">
                 <div>
                   <h4 className="text-sm font-medium mb-2">Skills</h4>
@@ -176,6 +188,7 @@ export function CandidateList({ candidates = [], isLoading = false }: CandidateL
                 >
                   View Profile
                 </Button>
+             
               </CardFooter>
             </Card>
           ))}

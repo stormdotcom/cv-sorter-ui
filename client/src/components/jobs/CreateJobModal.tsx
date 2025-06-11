@@ -202,7 +202,7 @@ const CreateJobModal: React.FC<CreateJobModalProps> = ({ isOpen, onClose, onSucc
               />
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 h-[200px] overflow-y-auto">
               <div className="flex justify-between items-center">
                 <FormLabel>Requirements</FormLabel>
                 <Button
@@ -217,7 +217,10 @@ const CreateJobModal: React.FC<CreateJobModalProps> = ({ isOpen, onClose, onSucc
               </div>
 
               {form.watch("requirements").map((_, index) => (
-                <div key={index} className="flex gap-2">
+                <div key={index} className="flex gap-2 items-start">
+                  <div className="flex items-center justify-center w-7 h-7 rounded bg-blue-100 text-blue-700 font-semibold mt-2">
+                    {index + 1}
+                  </div>
                   <FormField
                     control={form.control}
                     name={`requirements.${index}`}

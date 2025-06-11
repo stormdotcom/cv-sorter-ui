@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/layout/Header";
-import { getJobApi, archiveJobApi, unarchiveJobApi } from "@/http/apiCalls";
+import { getJobApi, archiveJobApi, unarchiveJobApi, listCandidateResumesByJobId } from "@/http/apiCalls";
 
 interface JobDescription {
   _id: string;
@@ -26,14 +26,16 @@ interface JobDescription {
 }
 
 export default function JobDescriptionDetail() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id;
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
   const [jobDescription, setJobDescription] = useState<JobDescription | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const [resumeList, setResumeList] = useState<any[]>([]);
+  const [resumeListLoading, setResumeListLoading] = useState(false);
   const fetchJobDescription = async () => {
     if (!id) {
       setError("Invalid job description ID");
@@ -59,6 +61,29 @@ export default function JobDescriptionDetail() {
   useEffect(() => {
     fetchJobDescription();
   }, [id]);
+
+  // once the data load, call their resume list with ranking,
+  const fetchResumeListByJobId = async (jobId: string) => {
+    try {
+      setResumeListLoading(true);
+      const { data } = await listCandidateResumesByJobId(jobId);
+      setResumeList(data);
+      setResumeListLoading(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to fetch resume list",
+        variant: "destructive",
+      });
+      setResumeListLoading(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (jobDescription) {
+  //     fetchResumeListByJobId(jobDescription._id);
+  //   }
+  // }, [jobDescription?._id]);
 
   const handleArchiveToggle = async () => {
     if (!id || !jobDescription) return;
@@ -170,12 +195,26 @@ export default function JobDescriptionDetail() {
                   <div className="text-lg font-medium text-gray-700">{jobDescription.company_name}</div>
                 </CardDescription>
               </div>
-              <div className="flex flex-col items-end gap-2">
-                {jobDescription.archived ? (
-                  <Badge variant="outline">Archived</Badge>
-                ) : (
-                  <Badge variant="default">Active</Badge>
-                )}
+              <div className="flex flex-col items-end gap-2 min-w-[120px]">
+                <div className="flex items-center gap-3 mb-1 self-end">
+                  <div
+                    onClick={!isLoading ? fetchJobDescription : undefined}
+                    title="Refetch"
+                    className={`flex flex-col items-center cursor-pointer select-none transition hover:bg-primary/10 rounded p-1 ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}
+                  >
+                    {isLoading ? (
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mb-1" />
+                    ) : (
+                      <RotateCcw className="h-6 w-6 text-primary mb-1" />
+                    )}
+                    <span className="text-xs text-primary font-medium">Refetch</span>
+                  </div>
+                  {jobDescription.archived ? (
+                    <Badge variant="outline">Archived</Badge>
+                  ) : (
+                    <Badge variant="default">Active</Badge>
+                  )}
+                </div>
                 <div className="text-sm text-gray-500">
                   Posted: {new Date(jobDescription.posted_on).toLocaleDateString()}
                 </div>

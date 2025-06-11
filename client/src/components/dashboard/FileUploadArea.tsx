@@ -36,36 +36,20 @@ export default function FileUploadArea() {
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [jobDescription, setJobDescription] = useState("");
-  const [jdLoading, setJdLoading] = useState(false);
-  const simulateFileUpload = async (selectedFiles: File[]) => {
-    setUploadStatus("uploading");
-    setProgress(0);
-
-    // Simulate progress
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 90) {
-          clearInterval(interval);
-          return 90;
-        }
-        return prev + 10;
-      });
-    }, 500);
-
-    // Simulate server processing time
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    clearInterval(interval);
-    setProgress(100);
-
-    setUploadStatus("success");
-
-    toast({
-      title: "Upload Successful",
-      description: "Your resume has been uploaded successfully.",
-    });
-  };
+//  mimic the setProgress function, max 5 seconds
+  const setProgressStateMimic = (value: number) => {
+    setProgress(value);
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+    progressIntervalRef.current = setInterval(() => {
+      setProgress(progress + 1);
+    }, 1000);
+    setTimeout(() => {
+      clearInterval(progressIntervalRef.current!);
+      setProgress(100);
+    }, 5000);
+  }
 
   const validateFile = (file: File): string | null => {
     // Check file type
@@ -118,10 +102,23 @@ export default function FileUploadArea() {
     if (files.length === 0) return;
 
     try {
+      setProgressStateMimic(0);
+      setLoading(true);
       const formData = new FormData();
       formData.append("file", files[0]);
-      const response = await fileUpload(formData);
-      console.log(response);
+      await fileUpload(formData);
+      setLoading(false);
+      toast({
+        title: "Uploaded",
+        description: "Resume uploaded successfully.",
+      });
+      //  reset the form
+      setFiles([]);
+      setUploadStatus("idle");
+      setProgress(0);
+      fileInputRef.current!.value = "";
+      //  reset the form data
+      formData.delete("file");
     } catch (error) {
       setUploadStatus("error");
       toast({
@@ -168,26 +165,7 @@ export default function FileUploadArea() {
     }
   };
 
-  const handleSubmitJobDescription = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Job description submitted");
-    try {
-      setJdLoading(true);
-      await searchResumes({
-        jobDescription: (e.target as HTMLTextAreaElement).value,
-      });
-      setJdLoading(false);
-    } catch (error) {
-      setJdLoading(false);
-      toast({
-        title: "Error",
-        description:
-          "There was an error searching for resumes. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
+ 
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -232,7 +210,7 @@ export default function FileUploadArea() {
                 </div>
               ))}
 
-              {uploadStatus === "uploading" && (
+              {loading && (
                 <Progress value={progress} className="mt-2" />
               )}
 
@@ -241,9 +219,26 @@ export default function FileUploadArea() {
                 disabled={uploadStatus === "uploading"}
                 className="w-full mt-4"
               >
-                {uploadStatus === "uploading"
-                  ? "Uploading..."
-                  : "Upload Resume"}
+                {loading && (
+                  <span className="animate-spin inline-block mr-2 align-middle">
+                    <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      />
+                    </svg>
+                  </span>
+                )}
+                {loading ? "Uploading..." : "Upload Resume"}
               </Button>
             </div>
           )}

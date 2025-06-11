@@ -56,7 +56,7 @@ export default function Dashboard() {
 
     const fetchCandidates = async () => {
       try {
-        const { data } = await listCandidatesApi({ limit: 4 });
+        const { data } = await listCandidatesApi({ limit: 3 });
         setCandidates(data);
       } catch (error: any) {
         toast({
@@ -93,7 +93,7 @@ export default function Dashboard() {
                 value={stats.totalCandidates.value.toString()} 
                 trend={`${stats.totalCandidates.meta.trend} ${stats.totalCandidates.meta.trendLabel}`}
                 icon="people" 
-                iconColor="text-primary" 
+                iconColor="" 
                 trendColor={stats.totalCandidates.meta.trend.startsWith('+') ? "text-success" : "text-destructive"}
               />
               <StatCard 

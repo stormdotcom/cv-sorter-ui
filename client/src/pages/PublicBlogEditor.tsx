@@ -42,7 +42,8 @@ const blogPostSchema = z.object({
 });
 
 const PublicBlogEditor = () => {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id;
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const isEditing = !!id;

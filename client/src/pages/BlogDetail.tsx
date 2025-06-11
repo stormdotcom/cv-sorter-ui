@@ -11,7 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { BlogPost } from "./PublicBlogEditor";
 
 export default function BlogDetail() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id;
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);

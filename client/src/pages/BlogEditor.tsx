@@ -54,7 +54,8 @@ const blogFormSchema = blogPostSchema
 type BlogFormValues = z.infer<typeof blogFormSchema>;
 
 export default function BlogEditor() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id;
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const isEditMode = !!id;
