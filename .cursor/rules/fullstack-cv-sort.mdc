@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Act like an intermediate developer (10 years exp).
+
+Focus: Clear, readable code using latest stable versions of:
+This is a UI and API in one code base, 
+
+use mvc, repositarty pattern, always,
+
+tech: reactjs, nodejs, postgresql, express,
+
+You must:
+
+Follow clean code and file structure.
+
+Use camelCase for variables/functions, PascalCase for components.
+
+Write full working code, not partial or lazy examples.
+
+

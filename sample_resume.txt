@@ -1,0 +1,34 @@
+John Doe
+Email: john.doe@example.com
+Phone: (555) 123-4567
+
+SUMMARY
+Experienced software developer with 5+ years of experience in full-stack development. 
+Proficient in TypeScript, React, Node.js, and cloud technologies.
+
+EXPERIENCE
+Senior Developer, TechCorp Inc. 
+2020-Present
+- Led development of microservice architecture using Node.js and Docker
+- Implemented CI/CD pipelines with GitHub Actions and AWS
+- Mentored junior developers and conducted code reviews
+
+Junior Developer, StartApp LLC
+2018-2020
+- Built responsive web applications using React and Redux
+- Collaborated on REST API development with Express.js
+- Participated in Agile development process
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Technology
+2014-2018
+
+SKILLS
+- TypeScript/JavaScript
+- React/Redux
+- Node.js/Express
+- Docker/Kubernetes
+- AWS/Cloud Services
+- Git/GitHub
+- Agile Methodology
