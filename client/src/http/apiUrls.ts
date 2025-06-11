@@ -53,20 +53,40 @@ export const API_URLS = {
       method: 'POST',
       requiresAuth: true,
     },
-    list: {
-      url: `file`,
+    resumes: {
+      url: `file/resumes`,
       method: 'GET',
       requiresAuth: true,
     },
-    sort: {
+    search: {
       url: `file/search`,
       method: 'POST',
       requiresAuth: true,
     },
+    get: (id: string): ApiEndpoint => ({
+      url: `file/${id}`,
+      method: 'GET',
+      requiresAuth: true,
+    }),
+    delete: (id: string): ApiEndpoint => ({
+      url: `file/resume/${id}`,
+      method: 'DELETE',
+      requiresAuth: true,
+    }),
+    archive: (id: string): ApiEndpoint => ({
+      url: `file/${id}/archive`,
+      method: 'POST',
+      requiresAuth: true,
+    }),
+    unarchive: (id: string): ApiEndpoint => ({
+      url: `file/${id}/unarchive`,
+      method: 'POST',
+      requiresAuth: true,
+    }),
   },
   job: {
     create: {
-      url: `job/create`,
+      url: `job`,
       method: 'POST',
       requiresAuth: true,
     },
@@ -87,11 +107,40 @@ export const API_URLS = {
     }),
     archive: (id: string): ApiEndpoint => ({
       url: `job/${id}/archive`,
-      method: 'DELETE',
+      method: 'PATCH',
+      requiresAuth: true,
+    }),
+    unarchive: (id: string): ApiEndpoint => ({
+      url: `job/${id}/unarchive`,
+      method: 'PATCH',
       requiresAuth: true,
     }),
   },
-  
+  candidate: {
+    list: {
+      url: `candidate`,
+      method: 'GET',
+      requiresAuth: true,
+    },
+    get: (id: string): ApiEndpoint => ({
+      url: `candidate/${id}`,
+      method: 'GET',
+      requiresAuth: true,
+    }),
+    update: (id: string): ApiEndpoint => ({
+      url: `candidate/${id}`,
+      method: 'PUT',
+      requiresAuth: true,
+    }),
+   
+  },
+  dashboard: {
+    stats: {
+      url: `common/dashboard/stats`,
+      method: 'GET',
+      requiresAuth: true,
+    },
+  },
  
   admin: {
     dashboard: {

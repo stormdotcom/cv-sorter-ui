@@ -4,14 +4,13 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-
     "dev": "vite",
     "build": "vite build",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc"
-    
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.4",
     "@hookform/resolvers": "^3.9.1",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@neondatabase/serverless": "^0.10.4",
@@ -67,6 +66,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.1",
     "react-icons": "^5.4.0",
+    "react-pdf": "^9.2.1",
     "react-resizable-panels": "^2.1.4",
     "recharts": "^2.13.0",
     "tailwind-merge": "^2.5.4",
@@ -93,8 +93,6 @@
     "@types/ws": "^8.5.13",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
-   
-    
     "esbuild": "^0.25.0",
     "nodemon": "^3.1.10",
     "postcss": "^8.4.47",

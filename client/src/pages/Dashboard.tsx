@@ -1,84 +1,120 @@
-import { Stats } from "@shared/schema";
 import { Header } from "@/components/layout/Header";
 import StatCard from "@/components/dashboard/StatCard";
 import FileUploadArea from "@/components/dashboard/FileUploadArea";
 import { CandidateList } from "@/components/candidates/CandidateList";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
-
-// Dummy data for dashboard stats
-const mockStats: Stats = {
-  totalCandidates: 156,
-  processedToday: 23,
-  pendingProcess: 8,
-  topMatchScore: 92,
-  // Add any other stats fields that might be needed
-};
+import { useToast } from "@/hooks/use-toast";
+import { getDashboardStatsApi, listCandidatesApi } from "@/http/apiCalls";
+ 
+interface DashboardStats {
+  totalCandidates: {
+    value: number;
+    meta: {
+      trend: string;
+      trendLabel: string;
+    };
+  };
+  processedToday: {
+    value: number;
+    meta: {
+      trend: string;
+      trendLabel: string;
+    };
+  };
+  pendingProcess: {
+    value: number;
+    meta: {
+      estimatedTime: string;
+    };
+  };
+}
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<Stats>(mockStats);
-  const [isLoading, setIsLoading] = useState(false); // Set to false since we're using mock data
+  const { toast } = useToast();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [candidates, setCandidates] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCandidates, setIsLoadingCandidates] = useState(true);
 
-  // Simulate loading state if needed
   useEffect(() => {
-    const simulateLoading = async () => {
-      setIsLoading(true);
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setStats(mockStats);
-      setIsLoading(false);
+    const fetchStats = async () => {
+      try {
+        const { data } = await getDashboardStatsApi();
+        setStats(data);
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to fetch dashboard stats",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    simulateLoading();
-  }, []);
+    const fetchCandidates = async () => {
+      try {
+        const { data } = await listCandidatesApi({ limit: 4 });
+        setCandidates(data);
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to fetch recent candidates",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingCandidates(false);
+      }
+    };
+
+    fetchStats();
+    fetchCandidates();
+  }, [toast]);
 
   return (
     <>
       <Header title="Dashboard" />
       
-      <div className="p-4 md:p-6">
+      <div className="space-y-6 w-full">
         {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {isLoading ? (
             <>
               <Skeleton className="h-32 w-full" />
               <Skeleton className="h-32 w-full" />
               <Skeleton className="h-32 w-full" />
-              <Skeleton className="h-32 w-full" />
             </>
-          ) : (
+          ) : stats ? (
             <>
               <StatCard 
                 title="Total Candidates" 
-                value={stats.totalCandidates.toString()} 
-                trend="+12% from last week" 
+                value={stats.totalCandidates.value.toString()} 
+                trend={`${stats.totalCandidates.meta.trend} ${stats.totalCandidates.meta.trendLabel}`}
                 icon="people" 
                 iconColor="text-primary" 
-                trendColor="text-secondary"
+                trendColor={stats.totalCandidates.meta.trend.startsWith('+') ? "text-success" : "text-destructive"}
               />
               <StatCard 
                 title="Processed Today" 
-                value={stats.processedToday.toString()} 
-                trend="+5% from yesterday" 
+                value={stats.processedToday.value.toString()} 
+                trend={`${stats.processedToday.meta.trend} ${stats.processedToday.meta.trendLabel}`}
                 icon="fact_check" 
                 iconColor="text-success" 
-                trendColor="text-secondary"
+                trendColor={stats.processedToday.meta.trend.startsWith('+') ? "text-success" : "text-destructive"}
               />
               <StatCard 
                 title="Pending Process" 
-                value={stats.pendingProcess.toString()} 
-                description="Estimated time: 8 mins" 
+                value={stats.pendingProcess.value.toString()} 
+                description={`Estimated time: ${stats.pendingProcess.meta.estimatedTime}`}
                 icon="pending" 
                 iconColor="text-warning" 
               />
-              <StatCard 
-                title="Top Match Score" 
-                value={`${stats.topMatchScore}%`} 
-                description="For Senior Developer" 
-                icon="star" 
-                iconColor="text-accent" 
-              />
             </>
+          ) : (
+            <div className="col-span-3 text-center py-8">
+              <p className="text-muted-foreground">Failed to load dashboard stats</p>
+            </div>
           )}
         </div>
         
@@ -86,7 +122,13 @@ export default function Dashboard() {
         <FileUploadArea />
         
         {/* Recently Processed Candidates */}
-        <CandidateList title="Recently Processed Candidates" limit={4} />
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Recently Processed Candidates</h2>
+          <CandidateList 
+            candidates={candidates} 
+            isLoading={isLoadingCandidates} 
+          />
+        </div>
       </div>
     </>
   );

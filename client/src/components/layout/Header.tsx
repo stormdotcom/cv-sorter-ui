@@ -12,7 +12,7 @@ export function Header({ title, children }: HeaderProps) {
   const userName = user?.username || "User";
   
   return (
-    <header className="bg-white shadow-sm p-4 sticky top-0 z-10">
+    <header className="bg-white shadow-sm p-4 sticky top-0 z-10 my-3">
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         <h2 className="text-xl font-semibold text-neutral-800">{title}</h2>
         

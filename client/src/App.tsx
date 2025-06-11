@@ -17,12 +17,17 @@ import PublicBlogDetail from "@/pages/PublicBlogDetail";
 import PublicBlogEditor from "@/pages/PublicBlogEditor";
 import AuthPage from "@/pages/auth-page";
 import { Sidebar } from "@/components/layout/Sidebar";
+import Resumes from "./pages/Resumes";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
       <Sidebar />
-      <main className="md:ml-64 p-4 w-full overflow-x-hidden">{children}</main>
+      <main className="md:ml-64 ">
+        <div className="w-full min-w-[1024px] max-w-[1440px] mx-auto p-4 overflow-x-auto">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }
@@ -114,6 +119,13 @@ function Router() {
 
         <ProtectedRoute path="/public-blog/editor/:id" adminOnly>
           <PublicBlogEditor />
+        </ProtectedRoute>
+
+
+        <ProtectedRoute path="/resume">
+          <AppLayout>
+            <Resumes />
+          </AppLayout>
         </ProtectedRoute>
 
         {/* Test upload route removed - integrated into main app */}

@@ -1,46 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/layout/Header";
 import { CandidateList } from "@/components/candidates/CandidateList";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { listCandidatesApi } from "@/http/apiCalls";
+
+interface Candidate {
+  _id: string;
+  name: string;
+  email: string;
+  skills: string[];
+  resumeIds: string[];
+  workExperience: any[];
+  jobMatchAnalysis: {
+    keyStrengths: string[];
+    potentialGaps: string[];
+  };
+  created_at: string;
+  updated_at: string;
+  __v: number;
+}
 
 export default function Candidates() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [submittedQuery, setSubmittedQuery] = useState("");
-  
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmittedQuery(searchQuery);
+  const { toast } = useToast();
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<any>({ query: "", page: 1, limit: 10 });
+
+  const fetchCandidates = async (filters: any) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { data } = await listCandidatesApi(filters);
+      setCandidates(data);
+    } catch (error: any) {
+      setError(error.message || "Failed to fetch candidates");
+      toast({
+        title: "Error",
+        description: error.message || "Failed to fetch candidates",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
+
+  useEffect(() => {
+    fetchCandidates(filters);
+  }, []);
+
   return (
-    <>
-      <Header title="Candidates">
-        <form onSubmit={handleSearch} className="flex gap-2 mt-3 md:mt-0">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Search candidates..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+    <div className="min-h-screen bg-white">
+      <Header title="Candidates" />
+      <main className="container mx-auto px-4 py-8">
+        {error ? (
+          <div className="text-center py-8">
+            <h3 className="text-lg font-medium text-red-600">{error}</h3>
+            <p className="mt-2 text-gray-500">Please try again later</p>
           </div>
-          <Button type="submit" variant="default" size="icon">
-            <Search className="h-4 w-4" />
-          </Button>
-        </form>
-      </Header>
-      
-      <div className="p-4 md:p-6">
-        <CandidateList 
-          title="All Candidates" 
-          searchQuery={submittedQuery} 
-          isPaginated 
-        />
-      </div>
-    </>
+        ) : (
+          <CandidateList 
+            candidates={candidates} 
+            isLoading={isLoading} 
+          />
+        )}
+      </main>
+    </div>
   );
 }

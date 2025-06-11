@@ -18,13 +18,14 @@ const navItems = [
   { path: "/candidates", label: "Candidates", icon: "people" },
   { path: "/job-descriptions", label: "Job Descriptions", icon: "work" },
   { path: "/blog", label: "Blog", icon: "article" },
+  { path: "/resume", label: "Resume", icon: "description" },
 ];
 
 export function Sidebar() {
   const [location] = useLocation();
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logoutMutation } = useAuth();
+  const { user, logout } = useAuth();
 
   // Check if on mobile device
   useEffect(() => {
@@ -50,7 +51,7 @@ export function Sidebar() {
   };
 
   const handleLogout = () => {
-    logoutMutation.mutate();
+    logout();
   };
 
   const sidebarContent = (

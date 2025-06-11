@@ -6,19 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Candidate } from "@shared/schema";
+import { getCandidateApi } from "@/http/apiCalls";
 
 // Dummy candidate data
-const dummyCandidate: Candidate = {
-  id: 1,
-  name: "John Smith",
-  email: "john.smith@example.com",
-  position: "Senior Software Engineer",
-  experience: "8 years",
-  skills: ["React", "TypeScript", "Node.js", "PostgreSQL", "AWS"],
-  matchScore: 92,
-  createdAt: new Date("2024-01-15T10:00:00Z"),
-  updatedAt: new Date("2024-03-15T14:30:00Z")
-};
 
 export default function CandidateDetail() {
   const [, setLocation] = useLocation();
@@ -32,8 +22,8 @@ export default function CandidateDetail() {
     const fetchCandidate = async () => {
       try {
         // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setCandidate(dummyCandidate);
+        const { data } = await getCandidateApi(candidateId);
+        setCandidate(data);
         setIsLoading(false);
       } catch (err) {
         console.error('Failed to fetch candidate:', err);
@@ -67,7 +57,7 @@ export default function CandidateDetail() {
             <Skeleton className="h-48 w-full" />
           </div>
         ) : candidate ? (
-          <CandidateDetailComponent candidate={candidate} />
+          <CandidateDetailComponent candidate={candidate as unknown as Candidate} />
         ) : (
           <div className="text-center py-12">
             <h3 className="text-lg font-medium text-gray-900">Candidate not found</h3>
