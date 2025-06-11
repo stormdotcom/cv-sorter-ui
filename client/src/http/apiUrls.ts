@@ -59,7 +59,7 @@ export const API_URLS = {
       requiresAuth: true,
     },
     search: {
-      url: `file/search`,
+      url: `file/search/resumes`,
       method: 'POST',
       requiresAuth: true,
     },

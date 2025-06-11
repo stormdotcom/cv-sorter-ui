@@ -1,28 +1,30 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-
-interface JobDescriptionSortProps {
-  onSubmit?: (jobDescription: string) => void;
-  onSortChange?: (sortBy: string) => void;
-}
+import { searchResumes } from "@/http/apiCalls";
 
 
-const JobDescriptionSort: React.FC<JobDescriptionSortProps> = ({ onSubmit, onSortChange }) => {
+
+const JobDescriptionSort: React.FC = () => {
   const [jobDescription, setJobDescription] = useState("");
-  const [sortBy, setSortBy] = useState("title");
   const [loading, setLoading] = useState(false);
 
+  const submitJobDescription = async (jobDescription: string) => {
+
+    try {
+     const response = await searchResumes({ jobDescription });
+     console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    if (onSubmit) await onSubmit(jobDescription);
+    await submitJobDescription((e.target as HTMLTextAreaElement).value);
     setLoading(false);
   };
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortBy(e.target.value);
-    if (onSortChange) onSortChange(e.target.value);
-  };
+
 
   return (
     <div className="w-full bg-card rounded-lg shadow p-6">
