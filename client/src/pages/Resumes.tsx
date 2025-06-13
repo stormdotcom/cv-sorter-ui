@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Download, Trash2, Eye, FileText, X } from "lucide-react";
 import { deleteFileApi, listResumes } from "@/http/apiCalls";
 import PdfBlobViewer from "@/components/ui/pdfviewer/PdfBlobViewer";
-import ConfirmationModal from "@/components/ui/ConfirmationModal ";
+
 import { Header } from "@/components/layout/Header";
 
 const SORT_OPTIONS = [
@@ -28,6 +28,44 @@ function formatDate(dateStr: string) {
     month: "short",
     day: "numeric",
   });
+}
+
+// Helper function to create a blob URL from resume data
+function createBlobUrl(resume: any): string | null {
+  if (!resume.blob?.data) return null;
+
+  try {
+    let byteArray: Uint8Array;
+    
+    if (typeof resume.blob.data === 'string') {
+      // Handle base64 string
+      const binary = atob(resume.blob.data);
+      byteArray = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        byteArray[i] = binary.charCodeAt(i);
+      }
+    } else if (Array.isArray(resume.blob.data)) {
+      // Handle number array
+      byteArray = new Uint8Array(resume.blob.data as number[]);
+    } else if (resume.blob.data instanceof Uint8Array) {
+      // Handle Uint8Array
+      byteArray = new Uint8Array(resume.blob.data.buffer);
+    } else {
+      console.error('Unsupported blob data type:', typeof resume.blob.data);
+      return null;
+    }
+
+    // Create a new ArrayBuffer from the byteArray to ensure type compatibility
+    const buffer = new ArrayBuffer(byteArray.length);
+    new Uint8Array(buffer).set(byteArray);
+    
+    // Create blob from the buffer
+    const blob = new Blob([buffer], { type: resume.mimeType });
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    console.error('Error creating blob URL:', error);
+    return null;
+  }
 }
 
 export default function ResumesPage() {
@@ -105,10 +143,24 @@ export default function ResumesPage() {
 
   const handleView = (resume: any) => {
     setModalResume(resume);
-    setViewPdf(resume.tempLocation || '');
+    
+    if (resume.tempLocation) {
+      setViewPdf(resume.tempLocation);
+    } else if (resume.blob?.data) {
+      const url = createBlobUrl(resume);
+      if (url) {
+        // Store the URL for cleanup
+        blobUrlsRef.current[resume._id] = url;
+        setViewPdf(url);
+      }
+    }
   };
 
   const closeModal = () => {
+    if (viewPdf && viewPdf.startsWith('blob:') && modalResume) {
+      URL.revokeObjectURL(blobUrlsRef.current[modalResume._id]);
+      delete blobUrlsRef.current[modalResume._id];
+    }
     setViewPdf(null);
     setModalResume(null);
   };
@@ -124,6 +176,15 @@ export default function ResumesPage() {
     setModalResume(resume);
     setIsConfirmationModalOpen(true);
   }
+
+  // Cleanup blob URLs on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(blobUrlsRef.current).forEach(URL.revokeObjectURL);
+      blobUrlsRef.current = {};
+    };
+  }, []);
+
   return (
     <div>
       <Header title="Resumes" />
@@ -184,12 +245,16 @@ export default function ResumesPage() {
                   <div className="flex items-center justify-center h-32 bg-muted rounded mb-4">
                     {resume.mimeType === "application/pdf" ? (
                       (() => {
-                        if (resume.blob && resume.blob.data) {
-                          const url = URL.createObjectURL(new Blob([resume.blob.data], { type: resume.mimeType }));
-                          return <PdfBlobViewer pdfUrl={url} initialSize="small" />;
-                        }  else {
-                          return <FileText className="h-12 w-12 text-muted-foreground" />;
+                        if (resume.tempLocation) {
+                          return <PdfBlobViewer pdfUrl={resume.tempLocation} initialSize="small" />;
+                        } else if (resume.blob?.data) {
+                          const url = createBlobUrl(resume);
+                          if (url) {
+                            blobUrlsRef.current[resume._id] = url;
+                            return <PdfBlobViewer pdfUrl={url} initialSize="small" />;
+                          }
                         }
+                        return <FileText className="h-12 w-12 text-muted-foreground" />;
                       })()
                     ) : (
                       <FileText className="h-12 w-12 text-muted-foreground" />
@@ -321,48 +386,30 @@ export default function ResumesPage() {
             </button>
             <h2 className="text-lg font-semibold mb-2">{modalResume.fileName}</h2>
             <div className="overflow-auto max-h-[70vh]">
-              {modalResume.mimeType === "application/pdf" ? (
-                modalResume.tempLocation ? (
-                  <PdfBlobViewer pdfUrl={modalResume.tempLocation} initialSize="medium" />
-                ) : modalResume.blob && modalResume.blob.data ? (
-                  (() => {
-                    if (!blobUrlsRef.current[modalResume._id]) {
-                      let byteArray;
-                      if (typeof modalResume.blob.data === 'string') {
-                        try {
-                          const binary = atob(modalResume.blob.data);
-                          byteArray = new Uint8Array(binary.length);
-                          for (let i = 0; i < binary.length; i++) {
-                            byteArray[i] = binary.charCodeAt(i);
-                          }
-                        } catch {
-                          byteArray = new Uint8Array();
-                        }
-                      } else if (Array.isArray(modalResume.blob.data)) {
-                        byteArray = new Uint8Array(modalResume.blob.data);
-                      } else {
-                        byteArray = modalResume.blob.data;
-                      }
-                      const blob = new Blob([byteArray], { type: modalResume.mimeType });
-                      const url = URL.createObjectURL(blob);
-                      blobUrlsRef.current[modalResume._id] = url;
-                    }
-                    return <PdfBlobViewer pdfUrl={blobUrlsRef.current[modalResume._id]} initialSize="medium" />;
-                  })()
-                ) : null
-              ) : null}
+              <PdfBlobViewer
+                pdfUrl={viewPdf}
+                initialSize="medium"
+                onError={(error) => {
+                  toast({
+                    title: "Error",
+                    description: `Failed to load PDF: ${error.message}`,
+                    variant: "destructive",
+                  });
+                  closeModal();
+                }}
+              />
             </div>
           </div>
         </div>
       )}
-      <ConfirmationModal
+      {/* <ConfirmationModal
         open={isConfirmationModalOpen}
         onClose={handleCloseModal}
         onConfirm={handleDelete}
         resume={modalResume}
         title="Delete Resume"
         description={`Are you sure you want to delete the resume "${modalResume?.fileName}"?`}
-      />
+      /> */}
     </div>
 
   );
