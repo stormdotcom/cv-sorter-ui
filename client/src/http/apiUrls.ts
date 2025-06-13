@@ -95,6 +95,11 @@ export const API_URLS = {
       method: 'GET',
       requiresAuth: true,
     },
+    refetchResumeList: (jobId: string): ApiEndpoint => ({
+      url: `job/${jobId}/candidates/rank`,
+      method: 'PUT',
+      requiresAuth: true,
+    }),
     listCandidateResumesByJobId: (jobId: string): ApiEndpoint => ({
       url: `job/${jobId}/candidates/rank`,
       method: 'GET',

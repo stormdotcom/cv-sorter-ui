@@ -84,7 +84,7 @@ export function CandidateDetail({ candidate }: CandidateDetailProps) {
                 <div className="space-y-4">
                   {candidate.workExperience.map((exp: any, index: number) => (
                     <div key={index} className="border-l-2 border-muted pl-4">
-                      <h4 className="font-medium">{exp.title || 'Unspecified Position'}</h4>
+                      <h4 className="font-medium">{exp.role || 'Unspecified Position'}</h4>
                       <p className="text-sm text-muted-foreground">{exp.company || 'Company not specified'}</p>
                       {exp.duration && (
                         <p className="text-sm text-muted-foreground">{exp.duration}</p>
@@ -123,14 +123,14 @@ export function CandidateDetail({ candidate }: CandidateDetailProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {candidate.jobMatchAnalysis?.keyStrengths?.length > 0 ? (
+            {candidate?.keyStrengths?.length > 0 ? (
               <div>
                 <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
                   <Award className="h-4 w-4 text-green-600" />
                   Key Strengths
                 </h3>
                 <ul className="space-y-2">
-                  {candidate.jobMatchAnalysis.keyStrengths.map((strength: any, index: number) => (
+                  {candidate.keyStrengths.map((strength: any, index: number) => (
                     <li key={index} className="text-sm text-green-700 flex items-start gap-2">
                       <span className="mt-1">•</span>
                       {strength}
@@ -148,14 +148,14 @@ export function CandidateDetail({ candidate }: CandidateDetailProps) {
               </div>
             )}
 
-            {candidate.jobMatchAnalysis?.potentialGaps?.length > 0 ? (
+            {candidate?.potentialGaps?.length > 0 ? (
               <div>
                 <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 text-amber-600" />
                   Potential Gaps
                 </h3>
                 <ul className="space-y-2">
-                  {candidate.jobMatchAnalysis.potentialGaps.map((gap: any, index: number  ) => (
+                  {candidate.potentialGaps.map((gap: any, index: number  ) => (
                     <li key={index} className="text-sm text-amber-700 flex items-start gap-2">
                       <span className="mt-1">•</span>
                       {gap}

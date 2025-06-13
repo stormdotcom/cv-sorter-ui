@@ -27,7 +27,7 @@ export const getJobApi = (id: string) => makeApiCall(API_URLS.job.get(id));
 export const updateJobApi = (id: string, data: any) => makeApiCall(API_URLS.job.update(id), data);
 export const archiveJobApi = (id: string) => makeApiCall(API_URLS.job.archive(id));
 export const unarchiveJobApi = (id: string) => makeApiCall(API_URLS.job.unarchive(id));
-
+export const refetchResumeListApi = (jobId: string) => makeApiCall(API_URLS.job.refetchResumeList(jobId));
 
 export const getDashboardStatsApi = () => makeApiCall(API_URLS.dashboard.stats);
 

@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/layout/Header";
-import { getJobApi, archiveJobApi, unarchiveJobApi, listCandidateResumesByJobId } from "@/http/apiCalls";
+import { getJobApi, archiveJobApi, unarchiveJobApi, listCandidateResumesByJobId, refetchResumeListApi } from "@/http/apiCalls";
+import ResultCard from "@/components/dashboard/ResultCard";
+import { format, formatDistanceToNow } from 'date-fns';
 
 interface JobDescription {
   _id: string;
@@ -36,6 +38,7 @@ export default function JobDescriptionDetail() {
   const [error, setError] = useState<string | null>(null);
   const [resumeList, setResumeList] = useState<any[]>([]);
   const [resumeListLoading, setResumeListLoading] = useState(false);
+  const [resumeListLastUpdated, setResumeListLastUpdated] = useState(null);
   const fetchJobDescription = async () => {
     if (!id) {
       setError("Invalid job description ID");
@@ -67,7 +70,15 @@ export default function JobDescriptionDetail() {
     try {
       setResumeListLoading(true);
       const { data } = await listCandidateResumesByJobId(jobId);
-      setResumeList(data);
+      if(data.resultFiles.length === 0) {
+        toast({
+          title: "No resumes found",
+          description: "No resumes found for this job",
+        });
+        return;
+      }
+      setResumeList(data.resultFiles);
+      setResumeListLastUpdated(data.updatedAt);
       setResumeListLoading(false);
     } catch (error: any) {
       toast({
@@ -79,11 +90,27 @@ export default function JobDescriptionDetail() {
     }
   };
 
-  // useEffect(() => {
-  //   if (jobDescription) {
-  //     fetchResumeListByJobId(jobDescription._id);
-  //   }
-  // }, [jobDescription?._id]);
+  const refetchResumeList = async (jobId: string) => {
+    try {
+      setResumeListLoading(true);
+       await refetchResumeListApi(jobId);
+      fetchResumeListByJobId(jobId);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to refetch resume list",
+        variant: "destructive",
+      });
+    } finally {
+      setResumeListLoading(false);
+    }
+  };
+
+  useEffect(() => { 
+    if (jobDescription) {
+      fetchResumeListByJobId(jobDescription._id);
+    }
+  }, [jobDescription?._id]);
 
   const handleArchiveToggle = async () => {
     if (!id || !jobDescription) return;
@@ -187,52 +214,20 @@ export default function JobDescriptionDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Job Details */}
         <Card className="lg:col-span-3">
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
                 <CardTitle className="text-2xl font-bold">{jobDescription.title}</CardTitle>
-                <CardDescription className="mt-2">
-                  <div className="text-lg font-medium text-gray-700">{jobDescription.company_name}</div>
-                </CardDescription>
+                {jobDescription.archived ? (
+                  <Badge variant="outline">Archived</Badge>
+                ) : (
+                  <Badge variant="default">Active</Badge>
+                )}
               </div>
-              <div className="flex flex-col items-end gap-2 min-w-[120px]">
-                <div className="flex items-center gap-3 mb-1 self-end">
-                  <div
-                    onClick={!isLoading ? fetchJobDescription : undefined}
-                    title="Refetch"
-                    className={`flex flex-col items-center cursor-pointer select-none transition hover:bg-primary/10 rounded p-1 ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}
-                  >
-                    {isLoading ? (
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mb-1" />
-                    ) : (
-                      <RotateCcw className="h-6 w-6 text-primary mb-1" />
-                    )}
-                    <span className="text-xs text-primary font-medium">Refetch</span>
-                  </div>
-                  {jobDescription.archived ? (
-                    <Badge variant="outline">Archived</Badge>
-                  ) : (
-                    <Badge variant="default">Active</Badge>
-                  )}
-                </div>
-                <div className="text-sm text-gray-500">
-                  Posted: {new Date(jobDescription.posted_on).toLocaleDateString()}
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-4 mt-4">
-              <div className="flex items-center text-gray-600">
-                <span className="material-icons text-sm mr-1">location_on</span>
-                {jobDescription.location}
-              </div>
-              <div className="flex items-center text-gray-600">
-                <span className="material-icons text-sm mr-1">work</span>
-                {jobDescription.job_type.charAt(0).toUpperCase() + jobDescription.job_type.slice(1)}
-              </div>
-              <div className="flex items-center text-gray-600">
-                <span className="material-icons text-sm mr-1">update</span>
-                Updated: {new Date(jobDescription.updated_on).toLocaleDateString()}
-              </div>
+              <CardDescription className="text-sm text-muted-foreground">
+                {jobDescription.company_name}
+              </CardDescription>
+              <div className="text-xs text-gray-500 mt-1">Created At: {new Date(jobDescription.created_at).toLocaleDateString()}</div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -246,6 +241,63 @@ export default function JobDescriptionDetail() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Resume List Section */}
+        <div className="lg:col-span-3">
+          <Card className="mt-6">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle className="text-xl font-semibold">Matching Resumes</CardTitle>
+                <CardDescription className="text-sm text-muted-foreground">{resumeList.length} resumes found</CardDescription>
+              </div>
+              <div
+                onClick={() => !resumeListLoading && jobDescription._id && refetchResumeList(jobDescription._id)}
+                title="Refetch Resumes"
+                className={`flex items-center gap-2 cursor-pointer select-none transition hover:bg-primary/10 rounded p-2 ${resumeListLoading ? 'opacity-60 pointer-events-none' : ''}`}
+              >
+                {resumeListLoading ? (
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                ) : (
+                  <RotateCcw className="h-5 w-5 text-primary" />
+                )}
+                <span className="text-sm text-primary font-medium">
+                  Refetch Resumes
+                  {resumeListLastUpdated ? ` (Last updated: ${format(new Date(resumeListLastUpdated), 'yyyy-MM-dd HH:mm')} · ${formatDistanceToNow(new Date(resumeListLastUpdated), { addSuffix: true })})` : ''}
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {resumeListLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="bg-gray-100 rounded-lg p-4 animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2 mb-3"></div>
+                      <div className="space-y-2">
+                        <div className="h-3 bg-gray-200 rounded w-full"></div>
+                        <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                      </div>
+                      <div className="flex gap-2 mt-4">
+                        <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+                        <div className="h-6 bg-gray-200 rounded-full w-24"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : resumeList.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No matching resumes found for this job description.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {resumeList.map((item, index) => (
+                    <ResultCard key={item._id || index} item={item} />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

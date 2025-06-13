@@ -35,7 +35,7 @@ const JobDescriptionSort: React.FC = () => {
   return (
     <div className="w-full bg-card rounded-lg shadow p-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-        <h2 className="text-lg font-semibold mb-2 md:mb-0">Job Description</h2>
+        <h2 className="text-lg font-semibold mb-2 md:mb-0">Quick Search</h2>
       </div>
       <form onSubmit={handleSubmit}>
         <label
