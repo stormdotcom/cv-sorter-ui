@@ -1,5 +1,10 @@
 {
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
+  "include": [
+    "client/src/**/*",
+    "shared/**/*",
+    "server/**/*",
+    "client/src/types/vite-env.d.ts"
+  ],
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
     "incremental": true,
@@ -14,9 +19,10 @@
     "allowImportingTsExtensions": true,
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "types": ["node", "vite/client"],
+    "types": ["node"],
+    "typeRoots": ["node_modules/@types", "/src/types"],
     "paths": {
-      "@/*": ["./client/src/*"],
+      "@/*": ["./src/*"],
       "@shared/*": ["./shared/*"]
     }
   }
