@@ -60,7 +60,7 @@ export function Sidebar() {
           <h1 className="text-xl font-bold flex items-center cursor-pointer group">
             <span className="material-icons mr-2 text-primary group-hover:text-primary/80 transition-colors">smart_toy</span>
             <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-              SmartHire
+              CV Sorter AI
             </span>
           </h1>
         </Link>

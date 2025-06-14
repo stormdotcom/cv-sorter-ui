@@ -16,7 +16,7 @@ export default function LandingPage() {
           <div className="flex items-center">
             <span className="material-icons text-primary text-4xl mr-2 animate-pulse">smart_toy</span>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-              SmartHire
+              CV Sorter AI
             </h1>
           </div>
           
@@ -212,7 +212,7 @@ export default function LandingPage() {
           <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Powerful Features</h2>
             <p className="text-base sm:text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto">
-              SmartHire uses advanced AI to streamline and enhance your recruitment process
+              CV Sorter AI uses advanced AI to streamline and enhance your recruitment process
             </p>
           </div>
           
@@ -336,7 +336,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Why Choose SmartHire?</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Why Choose CV Sorter AI?</h2>
               <p className="text-base sm:text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto">
                 Our platform transforms your recruitment process with AI-powered efficiency
               </p>
@@ -390,7 +390,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">Ready to Transform Your Hiring Process?</h2>
           <p className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 max-w-2xl mx-auto">
-            Join hundreds of companies using SmartHire to find the perfect candidates faster and more efficiently.
+            Join hundreds of companies using CV Sorter AI to find the perfect candidates faster and more efficiently.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
             {user ? (
@@ -425,7 +425,7 @@ export default function LandingPage() {
             <div className="mb-8 md:mb-0 text-center md:text-left">
               <div className="flex items-center mb-4 justify-center md:justify-start">
                 <span className="material-icons text-primary text-3xl sm:text-4xl mr-2 animate-pulse">smart_toy</span>
-                <h2 className="text-lg sm:text-xl font-bold text-white bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">SmartHire</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-white bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">CV Sorter AI</h2>
               </div>
               <p className="max-w-xs mx-auto md:mx-0 text-sm sm:text-base">
                 AI-powered recruitment platform that makes finding the right talent efficient and effective.
@@ -465,7 +465,7 @@ export default function LandingPage() {
           </div>
           
           <div className="border-t border-neutral-800 pt-6 sm:pt-8 mt-6 sm:mt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm mb-4 md:mb-0">© 2025 SmartHire. All rights reserved.</p>
+            <p className="text-sm mb-4 md:mb-0">© 2025 CV Sorter AI. All rights reserved.</p>
             <div className="flex space-x-4">
               <a href="#" className="hover:text-primary transition-transform duration-300 hover:scale-125">
                 <span className="material-icons text-xl sm:text-2xl">facebook</span>

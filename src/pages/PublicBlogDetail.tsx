@@ -117,7 +117,7 @@ export default function PublicBlogDetail() {
           <div className="flex items-center mb-4 sm:mb-0">
             <span className="material-icons text-primary text-3xl mr-2">smart_toy</span>
             <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-              SmartHire
+              CV Sorter AI
             </h1>
           </div>
           <div className="flex flex-wrap gap-2 justify-center">
@@ -208,7 +208,7 @@ export default function PublicBlogDetail() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-6 md:mb-0">
               <span className="material-icons text-primary text-3xl mr-2">smart_toy</span>
-              <h2 className="text-xl font-bold text-white bg-gradient-to-r from-primary to-blue-400 bg-clip-text">SmartHire</h2>
+              <h2 className="text-xl font-bold text-white bg-gradient-to-r from-primary to-blue-400 bg-clip-text">CV Sorter AI</h2>
             </div>
             <div className="flex space-x-8">
               <a href="/" className="hover:text-white">Home</a>
@@ -218,7 +218,7 @@ export default function PublicBlogDetail() {
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p>© 2025 SmartHire. All rights reserved.</p>
+            <p>© 2025 CV Sorter AI. All rights reserved.</p>
             <div className="flex space-x-4 mt-4 md:mt-0">
               <a href="#" className="hover:text-primary transition-transform duration-300 hover:scale-125">
                 <span className="material-icons text-xl">facebook</span>

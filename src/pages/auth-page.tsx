@@ -137,7 +137,7 @@ export default function AuthPage() {
       
       toast({
         title: "Registration successful",
-        description: "Welcome to SmartHire!",
+        description: "Welcome to CV Sorter AI!",
       });
     } catch (error) {
       toast({
@@ -161,7 +161,7 @@ export default function AuthPage() {
       <div className="flex-1 flex items-center justify-center p-6 bg-white dark:bg-gray-950">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold tracking-tight mb-2">SmartHire</h2>
+            <h2 className="text-3xl font-bold tracking-tight mb-2">CV Sorter AI</h2>
             <p className="text-muted-foreground">
               Log in to your account or create a new one
             </p>
@@ -393,7 +393,7 @@ export default function AuthPage() {
           <h1 className="text-4xl font-bold mb-6">Smart Candidate Selection</h1>
           <FileText className="h-24 w-24 mx-auto mb-6" />
           <p className="text-xl mb-8">
-            SmartHire uses AI to help you find the perfect candidates for your job openings. Upload CVs, create job descriptions, and get intelligent matches instantly.
+            CV Sorter AI uses AI to help you find the perfect candidates for your job openings. Upload CVs, create job descriptions, and get intelligent matches instantly.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
             <div className="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
