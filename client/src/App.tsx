@@ -1,3 +1,4 @@
+import '@/lib/pdfWorkerSetup';
 import { Switch, Route, useLocation } from "wouter";
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";

@@ -53,6 +53,11 @@ export const API_URLS = {
       method: 'POST',
       requiresAuth: true,
     },
+    uploadMultiple: {
+      url: `file/upload/bulk`,
+      method: 'POST',
+      requiresAuth: true,
+    },
     resumes: {
       url: `file/resumes`,
       method: 'GET',

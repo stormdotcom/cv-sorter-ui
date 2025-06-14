@@ -12,6 +12,7 @@ export const registerApi = (data: any) => makeApiCall(API_URLS.auth.register, da
 
 
 export const fileUpload =  (formData: any) => makeFileUploadCall(API_URLS.file.upload, formData)
+export const fileUploadMultiple =  (formData: any) => makeFileUploadCall(API_URLS.file.uploadMultiple, formData)
 export const listResumes =  (data: any) => makeApiCall(API_URLS.file.resumes, data);
 export const listCandidateResumesByJobId =  (jobId: string) => makeApiCall(API_URLS.job.listCandidateResumesByJobId(jobId));
 export const searchResumes =  (data: any) => makeApiCall(API_URLS.file.search, data)

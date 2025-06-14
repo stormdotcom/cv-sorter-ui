@@ -33,7 +33,7 @@ const JobDescriptionSort: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-card rounded-lg shadow p-6">
+    <div className="w-full bg-card rounded-lg shadow p-6 mt-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <h2 className="text-lg font-semibold mb-2 md:mb-0">Quick Search</h2>
       </div>
@@ -46,7 +46,7 @@ const JobDescriptionSort: React.FC = () => {
         </label>
         <textarea
           id="job-description"
-          className="w-full min-h-[80px] rounded border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder-white"
+          className="w-full min-h-[130px] rounded border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder-white"
           placeholder="Paste or type the job description here..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
