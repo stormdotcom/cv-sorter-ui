@@ -16,9 +16,8 @@ import {
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: "dashboard" },
   { path: "/candidates", label: "Candidates", icon: "people" },
-  { path: "/job-descriptions", label: "Job Descriptions", icon: "work" },
-  { path: "/blog", label: "Blog", icon: "article" },
-  { path: "/resume", label: "Resume", icon: "description" },
+  { path: "/job-descriptions", label: "Jobs", icon: "work" },
+  { path: "/resume", label: "Files", icon: "description" },
 ];
 
 export function Sidebar() {

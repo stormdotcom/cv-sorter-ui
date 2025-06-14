@@ -5,6 +5,7 @@ import "./PDFViewer.css";
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, Minimize2, Maximize2, MoreHorizontal, ZoomIn, ZoomOut, Download } from "lucide-react";
 
 // Set the worker path for react-pdf (Vite/Webpack compatible)
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -115,27 +116,50 @@ const PdfBlobViewer: React.FC<PdfBlobViewerProps> = ({
     <div className="pdf-viewer-container">
       {renderControls && (
         <div className="pdf-controls flex items-center gap-2 p-2 bg-muted rounded-t">
-          <Button variant="outline" size="sm" onClick={prevPage} disabled={pageNumber <= 1}>
-            Previous
+          <Button variant="outline" size="icon" onClick={prevPage} disabled={pageNumber <= 1} title="Previous">
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" onClick={nextPage} disabled={!numPages || pageNumber >= numPages}>
-            Next
+          <Button variant="outline" size="icon" onClick={nextPage} disabled={!numPages || pageNumber >= numPages} title="Next">
+            <ChevronRight className="h-4 w-4" />
           </Button>
           <div className="size-selector flex gap-1">
-            {(["small", "medium", "large"] as const).map((sizeOption) => (
-              <Button
-                key={sizeOption}
-                variant={size === sizeOption ? "default" : "outline"}
-                size="sm"
-                onClick={() => changeSize(sizeOption)}
-              >
-                {sizeOption.charAt(0).toUpperCase() + sizeOption.slice(1)}
-              </Button>
-            ))}
+            <Button
+              key="small"
+              variant={"outline"}
+              size="icon"
+              onClick={() => changeSize("small" as const)}
+              title="Small"
+            >
+              <Minimize2 className="h-4 w-4" />
+            </Button>
+            <Button
+              key="medium"
+              variant={size === "medium" ? "default" : "outline"}
+              size="icon"
+              onClick={() => changeSize("medium")}
+              title="Medium"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+            <Button
+              key="large"
+              variant={size === "large" ? "default" : "outline"}
+              size="icon"
+              onClick={() => changeSize("large")}
+              title="Large"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </Button>
           </div>
-          <Button variant="outline" size="sm" onClick={zoomIn}>Zoom In</Button>
-          <Button variant="outline" size="sm" onClick={zoomOut}>Zoom Out</Button>
-          <Button variant="outline" size="sm" onClick={downloadPDF}>Download</Button>
+          <Button variant="outline" size="icon" onClick={zoomIn} title="Zoom In">
+            <ZoomIn className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="icon" onClick={zoomOut} title="Zoom Out">
+            <ZoomOut className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="icon" onClick={downloadPDF} title="Download">
+            <Download className="h-4 w-4" />
+          </Button>
         </div>
       )}
 
