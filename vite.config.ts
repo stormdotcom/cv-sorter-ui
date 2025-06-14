@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => {
         "react-router-dom",
         "date-fns",
         "lodash",
-        "zod",
+ 
       ],
       // you can also force PDF.js ESM entry here:
       esbuildOptions: {
@@ -62,24 +62,6 @@ export default defineConfig(({ mode }) => {
       minify: mode === "production",
       rollupOptions: {
         output: {
-          // use a function for manualChunks so you don't rely on glob strings
-          manualChunks(id) {
-            if (id.includes("node_modules/react")) {
-              return "react-vendor";
-            }
-            if (id.includes("node_modules/react-router-dom")) {
-              return "react-vendor";
-            }
-            if (id.includes("node_modules/@radix-ui/")) {
-              return "ui-vendor";
-            }
-            if (id.includes("node_modules/pdfjs-dist")) {
-              return "pdf-vendor";
-            }
-            if (id.includes("node_modules/date-fns") || id.includes("node_modules/lodash")) {
-              return "utils-vendor";
-            }
-          },
           chunkFileNames: mode === "production"
             ? "assets/[hash].js"
             : "assets/[name].js",

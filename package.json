@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "vite build",
     "start": "NODE_ENV=production node dist/index.js",
-    "check": "tsc"
+    "check": "tsc",
+     "preview": "vite preview"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
