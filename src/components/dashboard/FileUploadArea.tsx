@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+} from "../ui/card";
+import { Progress } from "../ui/progress";
 import { FileText, Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { fileUploadMultiple } from "@/http/apiCalls";
+import { useToast } from "../../hooks/use-toast";
+import { fileUploadMultiple } from "../../http/apiCalls";
 import { toast as hotToast, Toaster } from 'react-hot-toast';
 
 const ALLOWED_FILE_TYPES = [".pdf", ".txt"];
@@ -148,21 +148,17 @@ function FileUploadArea() {
         formData.append('files', file);
       });
 
-      const response = await fileUploadMultiple(formData);
-      const { results } = await response.json();
+      const { results } = await fileUploadMultiple(formData);
       console.log('Upload results:', results);
       
       // Update progress
       const batchProgress = (batchNumber / totalBatches) * 100;
       setUploadProgress(batchProgress);
       
-      // Update toast message
+      // Update toast message with loading state
       if (uploadToastRef.current) {
-        hotToast(
-          <div className="flex items-center gap-2">
-            <span>📤</span>
-            <span>Uploading files... {Math.round(batchProgress)}% (Batch {batchNumber}/{totalBatches})</span>
-          </div>,
+        hotToast.loading(
+          `Uploading files... ${Math.round(batchProgress)}% (Batch ${batchNumber}/${totalBatches})`,
           { id: uploadToastRef.current }
         );
       }
@@ -170,11 +166,9 @@ function FileUploadArea() {
       return results.length;
     } catch (error) {
       console.error('Upload error:', error);
-      hotToast(
-        <div className="flex items-center gap-2 text-red-500">
-          <span>❌</span>
-          <span>Failed to upload batch {batchNumber}: {error instanceof Error ? error.message : 'Unknown error'}</span>
-        </div>
+      hotToast.error(
+        `Failed to upload batch ${batchNumber}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { id: uploadToastRef.current }
       );
       throw error;
     }
@@ -182,12 +176,7 @@ function FileUploadArea() {
 
   const startUpload = async () => {
     if (files.length === 0) {
-      hotToast(
-        <div className="flex items-center gap-2 text-yellow-500">
-          <span>⚠️</span>
-          <span>Please select valid files to upload.</span>
-        </div>
-      );
+      hotToast.error("Please select valid files to upload.");
       return;
     }
 
@@ -197,13 +186,8 @@ function FileUploadArea() {
     let totalProcessedFiles = 0;
 
     try {
-      // Start upload toast
-      uploadToastRef.current = hotToast(
-        <div className="flex items-center gap-2">
-          <span>📤</span>
-          <span>Preparing upload...</span>
-        </div>
-      );
+      // Start upload toast with loading state
+      uploadToastRef.current = hotToast.loading("Preparing upload...");
 
       const totalBatches = Math.ceil(files.length / BATCH_SIZE);
       
@@ -216,15 +200,9 @@ function FileUploadArea() {
         totalProcessedFiles += processedCount;
       }
 
-      // Upload complete
+      // Upload complete - update toast to success
       if (uploadToastRef.current) {
-        hotToast(
-          <div className="flex items-center gap-2 text-green-500">
-            <span>✅</span>
-            <span>Upload complete!</span>
-          </div>,
-          { id: uploadToastRef.current }
-        );
+        hotToast.success("Upload complete!", { id: uploadToastRef.current });
       }
 
       // Start processing if we have files to process
@@ -233,13 +211,8 @@ function FileUploadArea() {
         const totalProcessingTime = totalProcessedFiles * 12; // 12 seconds per file
         let elapsedTime = 0;
 
-        // Start processing toast with progress
-        processingToastRef.current = hotToast(
-          <div className="flex items-center gap-2">
-            <span>⚙️</span>
-            <span>Processing {totalProcessedFiles} file{totalProcessedFiles > 1 ? 's' : ''}...</span>
-          </div>
-        );
+        // Start processing toast with loading state
+        processingToastRef.current = hotToast.loading("Processing files...");
 
         // Update processing progress
         processingIntervalRef.current = setInterval(() => {
@@ -248,11 +221,8 @@ function FileUploadArea() {
           setProcessingProgress(progress);
 
           if (processingToastRef.current) {
-            hotToast(
-              <div className="flex items-center gap-2">
-                <span>⚙️</span>
-                <span>Processing files... {Math.round(progress)}% ({elapsedTime}s/{totalProcessingTime}s)</span>
-              </div>,
+            hotToast.loading(
+              `Processing files... ${Math.round(progress)}% (${elapsedTime}s/${totalProcessingTime}s)`,
               { id: processingToastRef.current }
             );
           }
@@ -262,13 +232,7 @@ function FileUploadArea() {
               clearInterval(processingIntervalRef.current);
             }
             if (processingToastRef.current) {
-              hotToast(
-                <div className="flex items-center gap-2 text-green-500">
-                  <span>✅</span>
-                  <span>Processing complete!</span>
-                </div>,
-                { id: processingToastRef.current }
-              );
+              hotToast.success("Processing complete!", { id: processingToastRef.current });
             }
             setIsProcessing(false);
             window.location.reload();
@@ -279,13 +243,7 @@ function FileUploadArea() {
     } catch (error) {
       console.error('Upload process failed:', error);
       if (uploadToastRef.current) {
-        hotToast(
-          <div className="flex items-center gap-2 text-red-500">
-            <span>❌</span>
-            <span>Upload failed!</span>
-          </div>,
-          { id: uploadToastRef.current }
-        );
+        hotToast.error("Upload failed!", { id: uploadToastRef.current });
       }
     } finally {
       setIsUploading(false);
@@ -312,6 +270,18 @@ function FileUploadArea() {
             color: '#fff',
             padding: '16px',
             borderRadius: '8px',
+          },
+          loading: {
+            duration: Infinity,
+            icon: '🔄',
+          },
+          success: {
+            duration: 3000,
+            icon: '✅',
+          },
+          error: {
+            duration: 4000,
+            icon: '❌',
           },
         }}
       />
