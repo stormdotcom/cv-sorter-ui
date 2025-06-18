@@ -4,6 +4,8 @@
   --primary-foreground: 255 255 255;
   --card: 10 25 47;
   --card-foreground: 255 255 255;
+  --background: 245 247 250;
+  --foreground: 20 30 40;
 }
 
 /* Google Material Icons & Font */
@@ -22,6 +24,10 @@
   .card-hover {
     @apply transition-all duration-300 hover:shadow-xl;
   }
+
+  .bg-card {
+    background-color: rgb(10, 25, 47) !important;
+  }
 }
 
 @layer base {
@@ -36,6 +42,7 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
     font-family: 'Inter', sans-serif;
+    background-color: #f5f7fa;
   }
   
   h1, h2, h3, h4, h5, h6 {
