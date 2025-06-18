@@ -77,14 +77,14 @@ export default function Dashboard() {
     <>
       <Header title="Dashboard" />
       
-      <div className="space-y-6 w-full">
+      <div className="space-y-10 w-full">
         {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
           {isLoading ? (
             <>
-              <Skeleton className="h-32 w-full" />
-              <Skeleton className="h-32 w-full" />
-              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full rounded-2xl" />
+              <Skeleton className="h-32 w-full rounded-2xl" />
+              <Skeleton className="h-32 w-full rounded-2xl" />
             </>
           ) : stats ? (
             <>
@@ -93,23 +93,23 @@ export default function Dashboard() {
                 value={stats.totalCandidates.value.toString()} 
                 trend={`${stats.totalCandidates.meta.trend} ${stats.totalCandidates.meta.trendLabel}`}
                 icon="people" 
-                iconColor="" 
-                trendColor={stats.totalCandidates.meta.trend.startsWith('+') ? "text-success" : "text-destructive"}
+                iconColor="text-primary" 
+                trendColor={stats.totalCandidates.meta.trend.startsWith('+') ? "text-green-400" : "text-red-400"}
               />
               <StatCard 
                 title="Processed Today" 
                 value={stats.processedToday.value.toString()} 
                 trend={`${stats.processedToday.meta.trend} ${stats.processedToday.meta.trendLabel}`}
                 icon="fact_check" 
-                iconColor="text-success" 
-                trendColor={stats.processedToday.meta.trend.startsWith('+') ? "text-success" : "text-destructive"}
+                iconColor="text-green-400" 
+                trendColor={stats.processedToday.meta.trend.startsWith('+') ? "text-green-400" : "text-red-400"}
               />
               <StatCard 
                 title="Pending Process" 
                 value={stats.pendingProcess.value.toString()} 
                 description={`Estimated time: ${stats.pendingProcess.meta.estimatedTime}`}
                 icon="pending" 
-                iconColor="text-warning" 
+                iconColor="text-yellow-400" 
               />
             </>
           ) : (
@@ -120,18 +120,18 @@ export default function Dashboard() {
         </div>
         
         {/* File Upload Area & Job Description Sort side by side */}
-        <div className="flex flex-col md:flex-row gap-6 w-full">
-          <div className="flex-1">
+        <div className="flex flex-col md:flex-row gap-8 w-full animate-fade-in">
+          <div className="flex-1 transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl">
             <FileUploadArea />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl">
             <JobDescriptionSort />
           </div>
         </div>
         
         {/* Recently Processed Candidates */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Recently Processed Candidates</h2>
+        <div className="animate-fade-in">
+          <h2 className="text-xl font-semibold mb-4 text-white">Recently Processed Candidates</h2>
           <CandidateList 
             candidates={candidates} 
             isLoading={isLoadingCandidates} 
