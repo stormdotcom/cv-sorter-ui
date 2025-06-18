@@ -21,7 +21,7 @@ export default function StatCard({
 }: StatCardProps) {
   return (
     <div
-      className="bg-card text-card-foreground rounded-2xl shadow-lg glass-effect p-6 transition-transform duration-300 ease-out transform hover:scale-105 hover:shadow-2xl animate-fade-in cursor-pointer group"
+      className="bg-card text-card-foreground rounded-2xl shadow-lg glass-effect p-6 transition-transform duration-300 ease-out transform hover:scale-105 hover:shadow-2xl animate-fade-in cursor-pointer group border border-white/10"
     >
       <div className="flex items-center justify-between">
         <div>
@@ -36,7 +36,7 @@ export default function StatCard({
       </div>
       {trend && (
         <p className={`text-sm ${trendColor} mt-3 flex items-center`}>
-          <span className="material-icons text-base mr-1">arrow_upward</span>
+          <span className={`material-icons text-base mr-1 ${trendColor.includes('green') ? 'text-primary' : ''}`}>arrow_upward</span>
           {trend}
         </p>
       )}
