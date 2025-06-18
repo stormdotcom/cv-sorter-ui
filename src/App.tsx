@@ -1,4 +1,3 @@
-
 import { Switch, Route, useLocation } from "wouter";
 import { Suspense, lazy } from "react";
 import { Toaster } from "./components/ui/toaster";
@@ -13,7 +12,6 @@ const Candidates = lazy(() => import("./pages/Candidates"));
 const CandidateDetail = lazy(() => import("./pages/CandidateDetail"));
 const JobDescriptions = lazy(() => import("./pages/JobDescriptions"));
 const JobDescriptionDetail = lazy(() => import("./pages/JobDescriptionDetail"));
-const LandingPage = lazy(() => import("./pages/LandingPage"));
 const BlogList = lazy(() => import("./pages/BlogList"));
 const BlogDetail = lazy(() => import("./pages/BlogDetail"));
 const BlogEditor = lazy(() => import("./pages/BlogEditor"));
@@ -43,17 +41,16 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
 function Router() {
   const [location] = useLocation();
-  const isLandingPage = location === "/";
 
   return (
     <>
       <Switch>
-        {/* Public routes */}
-        <Route path="/">
-          <Suspense fallback={<PageLoader />}>
-            <LandingPage />
-          </Suspense>
-        </Route>
+        {/* Root now shows dashboard (protected) */}
+        <ProtectedRoute path="/">
+          <AppLayout>
+            <Dashboard />
+          </AppLayout>
+        </ProtectedRoute>
 
         <Route path="/auth">
           <Suspense fallback={<PageLoader />}>
