@@ -1,6 +1,7 @@
 {
   "variant": "vibrant",
-  "primary": "hsl(215, 90%, 45%)",
+  "primary": "rgb(4, 106, 56)",
+  "card": "rgb(10, 25, 47)",
   "appearance": "light",
   "radius": 0.6
 }

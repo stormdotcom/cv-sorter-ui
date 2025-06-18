@@ -1,3 +1,11 @@
+/* Theme variables */
+:root {
+  --primary: 4 106 56;
+  --primary-foreground: 255 255 255;
+  --card: 10 25 47;
+  --card-foreground: 255 255 255;
+}
+
 /* Google Material Icons & Font */
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
