@@ -14,16 +14,16 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "hsl(var(--card, 220, 64%, 11%))",
+          foreground: "hsl(var(--card-foreground, 0, 0%, 100%))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "hsl(var(--primary, 146, 94%, 22%))",
+          foreground: "hsl(var(--primary-foreground, 0, 0%, 100%))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
