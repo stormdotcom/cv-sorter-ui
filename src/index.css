@@ -24,10 +24,6 @@
   .card-hover {
     @apply transition-all duration-300 hover:shadow-xl;
   }
-
-  .bg-card {
-    background-color: rgb(10, 25, 47) !important;
-  }
 }
 
 @layer base {
